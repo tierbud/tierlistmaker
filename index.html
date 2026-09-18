@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TierBud: The Free Tier List Maker That Skips the Sign-Up Screen</title>
+<meta name="description" content="Make a tier list right now, no account needed. Drag, draw, rank videos, go blind mode, and share it in one click with TierBud.">
+</head>
+<body style="margin:0; background:#0A0E14; padding: 2rem 1rem;">
+
+<div class="tb-article">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap');
+
+.tb-article {
+  --pink: #EC4899;
+  --pink-dark: #BE185D;
+  --surface-0: transparent;
+  --surface-1: #131924;
+  --surface-1-hover: #1A2232;
+  --surface-2: #232D3F;
+  --muted: #9CA3AF;
+  --text-soft: #D1D5DB;
+  --text: #F4F4F5;
+  --green: #10B981;
+  --blue: #3B82F6;
+  --red: #EF4444;
+  --orange: #F97316;
+  --yellow: #FACC15;
+  --purple: #8B5CF6;
+
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  font-family: var(--font-body);
+  color: var(--text-soft);
+  background: var(--surface-0);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+.tb-article *, .tb-article *::before, .tb-article *::after { box-sizing: border-box; }
+
+.tb-article h1, .tb-article h2, .tb-article h3, .tb-article h4 {
+  font-family: var(--font-display);
+  color: var(--text);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.tb-article h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; margin-bottom: 0.75rem; }
+.tb-article h2 { font-size: 1.6rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+.tb-article h3 { font-size: 1.15rem; font-weight: 700; color: #F9A8D4; margin: 0 0 0.5rem; }
+.tb-article p { margin: 0 0 1rem; color: var(--text-soft); }
+.tb-article a { color: #F9A8D4; text-decoration: none; border-bottom: 1px dashed var(--pink); transition: all 0.2s ease; }
+.tb-article a:hover { color: var(--pink); border-bottom-style: solid; }
+
+.tb-article .tb-rail { display: flex; gap: 8px; margin: 3rem 0; }
+.tb-article .tb-rail span { flex: 1; height: 6px; border-radius: 999px; }
+.tb-article .tb-rail span:nth-child(1){ background: var(--pink); }
+.tb-article .tb-rail span:nth-child(2){ background: var(--purple); }
+.tb-article .tb-rail span:nth-child(3){ background: var(--blue); }
+.tb-article .tb-rail span:nth-child(4){ background: var(--green); }
+.tb-article .tb-rail span:nth-child(5){ background: var(--yellow); }
+.tb-article .tb-rail span:nth-child(6){ background: var(--orange); }
+
+.tb-hero {
+  background: radial-gradient(circle at top right, rgba(236, 72, 153, 0.12), transparent 50%), var(--surface-1);
+  border: 1px solid var(--surface-2);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.tb-badge-wrapper { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+.tb-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--pink);
+  background: rgba(236, 72, 153, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+}
+.tb-meta { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.tb-lede { font-size: 1.15rem; color: #E5E7EB; line-height: 1.7; margin-top: 1rem; }
+
+.tb-eeat {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface-1);
+  border: 1px solid var(--surface-2);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.tb-eeat-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tb-eeat-avatar-link { border-bottom: none !important; flex-shrink: 0; line-height: 0; }
+.tb-eeat-name { color: var(--text); font-weight: 600; margin: 0 0 0.2rem; font-size: 0.95rem; }
+.tb-eeat-name a { color: var(--text); border-bottom-color: transparent; }
+.tb-eeat-name a:hover { color: var(--pink); border-bottom-color: var(--pink); }
+.tb-eeat-desc { margin: 0; font-size: 0.82rem; color: var(--muted); font-family: var(--font-mono); }
+.tb-eeat-desc a { color: var(--muted); border-bottom-color: var(--surface-2); }
+.tb-eeat-desc a:hover { color: var(--pink); }
+
+.tb-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin: 1.5rem 0; }
+.tb-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin: 1.5rem 0; }
+
+.tb-card {
+  background: var(--surface-1);
+  border: 1px solid var(--surface-2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.tb-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(236, 72, 153, 0.4);
+  background: var(--surface-1-hover);
+}
+.tb-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(236, 72, 153, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.tb-callout {
+  background: linear-gradient(90deg, rgba(236, 72, 153, 0.1), transparent);
+  border: 1px solid var(--surface-2);
+  border-left: 4px solid var(--pink);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.tb-tierlist { list-style: none; padding: 0; margin: 1.5rem 0; }
+.tb-tierlist li {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.85rem;
+  background: var(--surface-1);
+  border: 1px solid var(--surface-2);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+.tb-chip {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.8rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tb-chip.s { background: var(--pink); color: #fff; }
+.tb-chip.a { background: var(--blue); color: #fff; }
+.tb-chip.b { background: var(--green); color: #000; }
+.tb-chip.c { background: var(--orange); color: #000; }
+.tb-chip.d { background: var(--yellow); color: #000; }
+
+.tb-conclusion {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, var(--surface-1) 100%);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  margin-top: 3rem;
+}
+.tb-cta {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  border-bottom: none !important;
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tb-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(236, 72, 153, 0.5); }
+
+.tb-embed-wrap { margin: 1rem 0 2rem; }
+.tb-embed-credit { font-size: 0.82rem; color: var(--muted); text-align: center; margin-top: 0.6rem; }
+
+@media (max-width: 640px) {
+  .tb-hero, .tb-conclusion { padding: 1.5rem 1.2rem; }
+  .tb-grid-2, .tb-grid-3 { grid-template-columns: 1fr; }
+  .tb-eeat { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<h1 style="text-align: center;">TierBud: The Free Tier List Maker That Skips the Sign-Up Screen</h1>
+
+<div class="tb-embed-wrap">
+<iframe src="https://tierbud.com/?tierbud_embed=17&bare=1" width="100%" height="720" style="border:0;max-width:100%;border-radius:12px" loading="lazy" title="Tier List Maker"></iframe>
+<p class="tb-embed-credit">Created with <a href="https://tierbud.com/">TierBud - Tier List Maker — free tier list builder</a></p>
+</div>
+
+<div class="tb-hero">
+  <div class="tb-badge-wrapper">
+    <span class="tb-kicker">Free · No Sign-Up</span>
+    <span class="tb-meta">TierBud — Tier List Maker</span>
+  </div>
+  <p class="tb-lede">Most tier list tools make you create an account before you can drag a single image. TierBud doesn't. The board above is fully live right now, no login wall, no "sign up to save" popup halfway through. Drop your own pictures in, rearrange them, and you're already ranking.</p>
+</div>
+
+<p>What usually happens with these tools is you find a good idea, get three items in, and then hit a paywall or a registration form. TierBud was built to skip that step entirely. Every feature on the site, from the drag-and-drop board to publishing your own version as a page, works without an account. If you want to walk away the second you're done, you can. If you want to come back and tinker later, that's fine too, you just won't have a saved profile waiting for you unless you grab the share link first.</p>
+
+<div class="tb-eeat">
+  <div class="tb-eeat-avatar">DH</div>
+  <div>
+    <p class="tb-eeat-name">Derek Halloway</p>
+    <p class="tb-eeat-desc">Software developer, lifelong gamer, builder of TierBud</p>
+  </div>
+</div>
+
+<div class="tb-rail"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<h2>What you can actually do with it</h2>
+<p>The board embedded above is the same maker that lives on TierBud's homepage. It's not a stripped-down demo, it's the real thing.</p>
+
+<div class="tb-grid-2">
+  <div class="tb-card">
+    <div class="tb-card-icon">🖱️</div>
+    <h3>Drag, drop, done</h3>
+    <p>Upload your own images and pull them straight into a tier. No setup screen, no tutorial to click through first. It's ready the moment the page loads.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">🎨</div>
+    <h3>A real design editor</h3>
+    <p>Hit Create or click any item and you get a small MS Paint style toolkit: pen, shapes, emoji stamps, eraser, undo/redo, and a text tool with bold, italic, and alignment. You can even draw directly on an uploaded photo or stack extra images on top as movable layers.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">🧱</div>
+    <h3>Tiers built your way</h3>
+    <p>Add or remove rows, rename them, set a background color and a label color for each one, and drag them into whatever order you want. You're not stuck with S through F.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">🎬</div>
+    <h3>Rank videos too</h3>
+    <p>Paste a link from YouTube, TikTok, Instagram, or nearly anywhere else and it turns into a draggable card. Click it and the video plays right there in a popup.</p>
+  </div>
+</div>
+
+<div class="tb-callout">
+  <p style="margin:0;"><strong>One click to finish.</strong> Once every item in the pool has a tier, a completion popup pops up automatically offering to download your board as an image or generate a shareable link. You don't have to hunt for a save button.</p>
+</div>
+
+<h2>Ways people actually use it</h2>
+<p>Because the board is this flexible, it ends up getting used for more than the obvious stuff.</p>
+
+<div class="tb-grid-2">
+  <div class="tb-card">
+    <div class="tb-card-icon">🎮</div>
+    <h3>Game rosters and character lists</h3>
+    <p>Fighting game casts, RPG party members, Pokémon generations, anything with a big list of entries works well here, especially with the AI import if you don't want to upload every image by hand.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">🍔</div>
+    <h3>Food, shows, and everyday debates</h3>
+    <p>Fast food chains, sitcoms, songs off an album, snack brands. Anything a group of friends argues about over text is a decent candidate for a tier list.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">🙈</div>
+    <h3>Blind ranking for reaction content</h3>
+    <p>Templates with blind mode show items one at a time, in random order, with no going back once you've placed one. It's a good fit for streamers and anyone filming a reaction-style ranking.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">🧩</div>
+    <h3>Custom boards from scratch</h3>
+    <p>Skip templates entirely and build something with your own images and the design editor. Useful for anything niche enough that nobody's made a template for it yet.</p>
+  </div>
+</div>
+
+<h2>Sharing what you build</h2>
+<p>The generated link isn't just a static picture of your board. It opens as a real page with a download button, social share buttons for places like Facebook, X, Reddit, and WhatsApp, emoji reactions so other people can react to your picks, an embed code if you want to drop the interactive version into your own post, and a comment box underneath it. Before you generate the link you can add a title and, if you want, a creator name, social handle, and photo that show up on the page.</p>
+
+<p>If you'd rather keep it on the site itself, there's also a "Save as post" option after you edit a template, which walks you through a short title and category form and publishes your version as its own page, credited to you, no account required either way.</p>
+
+<div class="tb-rail"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<h2>Where to go from here</h2>
+<p>If you're just curious, the board at the top of this page is a fine place to poke around. If you already know what you want to rank, TierBud has more ways in.</p>
+
+<div class="tb-grid-3">
+  <div class="tb-card">
+    <div class="tb-card-icon">📋</div>
+    <h3>Browse ready-made templates</h3>
+    <p>Plenty of topics already have a template preloaded with images, so there's nothing to upload before you start ranking.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">✏️</div>
+    <h3>Start completely from scratch</h3>
+    <p>Open the full editor and build a board around whatever you're into, with your own images from the ground up.</p>
+  </div>
+  <div class="tb-card">
+    <div class="tb-card-icon">💡</div>
+    <h3>Suggest a fix to a template</h3>
+    <p>Spot a missing character or an outdated entry on an existing template? Flag it, and attach a replacement image if you've got one.</p>
+  </div>
+</div>
+
+<div class="tb-conclusion">
+  <h2 style="margin-top:0;">Ready to rank something?</h2>
+  <p>The board is already loaded above. Drag your first item in, or head over to TierBud for the full template library.</p>
+  <a href="https://tierbud.com/" class="tb-cta">Try the free tier list maker with no sign-up →</a>
+</div>
+
+</div>
+</body>
+</html>
